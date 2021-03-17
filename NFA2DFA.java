@@ -106,10 +106,8 @@ public class NFA2DFA {
         // initialize with initial state
         Qprime = new ArrayList<>(); // set of states already in dfa
         statesToAdd = new ArrayList<>(); // set of states that need put in dfa
-        Set<Integer> first = new HashSet<>();
         
-        first.add(initState);
-        statesToAdd.add(first); // queue with states that will be added
+        statesToAdd.add(lClosure(NFAGraph.get(initState).get(numTransitions), new HashSet<Integer>(), 0)); // queue with states that will be added initialize with lclosure of first state
 
 
         ArrayList<Set<Integer>> stateRow = new ArrayList<>();
@@ -170,7 +168,7 @@ public class NFA2DFA {
         }
         System.out.println("\n--------------------------------------------");
         for (ArrayList<Set<Integer>> row : DFAGraph) {
-            System.out.printf("%5s ", rowNum + ":");
+            System.out.printf("%5s ", rowNum +":" );
             rowNum++;
             ArrayList<Integer> simpleifiedRow = new ArrayList<>();
             for (Set<Integer> item : row) {
@@ -226,7 +224,7 @@ public class NFA2DFA {
             for (int j=0; j < numTransitions; j++){
                 for (Integer ii : NFAGraph.get(i).get(j)) {
                     row.get(j).addAll(NFAGraph.get(ii).get(numTransitions));
-                    row.get(j).addAll(lClosure(NFAGraph.get(ii).get(numTransitions), new HashSet<Integer>()));
+                    row.get(j).addAll(lClosure(NFAGraph.get(ii).get(numTransitions), new HashSet<Integer>(), 0));
                 }
             }
             
@@ -235,11 +233,11 @@ public class NFA2DFA {
     }
 
     //method to get the recursive lambda closure of the states
-    public static Set<Integer> lClosure(Set<Integer> state, Set<Integer> set){
+    public static Set<Integer> lClosure(Set<Integer> state, Set<Integer> set, int numCalls){
+        
         if(set.containsAll(state)){
             return set;
         }
-        
         if(state.size()==1){
             set.addAll(state);
         }
@@ -247,11 +245,15 @@ public class NFA2DFA {
         {
             for (Integer st : state) {
                 set.addAll(state);
-                set.addAll(lClosure(NFAGraph.get(st).get(numTransitions), set));
+                set.addAll(lClosure(NFAGraph.get(st).get(numTransitions), set, numCalls+1));
             }
         }
         return set;
     }
+
+    // public static Set<Integer> eClosure(Set<Integer> state, Set<Integer> set){
+
+    // }
 
     public static void checkSolution(String testFile){
         System.out.println("Parsing results of Strings in " + testFile + ": ");
