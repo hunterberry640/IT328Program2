@@ -275,13 +275,13 @@ public class NFA2DFA {
         int count = 0;
         while(lineScanner.hasNext()){
             testString = lineScanner.nextLine();
-            // System.out.println(testString);
+            
             String[] testArr = testString.split("");
             int currentState = 0;
             int lastInput = 0;
 
             for (String str : testArr) {
-                if(str == ""){
+                if(str.equals("")){
                     break;
                 }
                 if(inputs.indexOf(str) >= numTransitions){
